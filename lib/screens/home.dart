@@ -1,4 +1,5 @@
 import 'package:favorite_places/providers/places.dart';
+import 'package:favorite_places/screens/create_place.dart';
 import 'package:favorite_places/widgets/place_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +29,13 @@ class _HomeState extends ConsumerState<Home> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CreatePlace(),
+                ),
+              );
+            },
           ),
         ],
       ),
