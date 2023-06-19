@@ -1,13 +1,13 @@
 class Place {
   Place({
-    required this.x,
-    required this.y,
+    required this.lat,
+    required this.lng,
     required this.name,
     this.imageUrl,
   });
 
-  double x;
-  double y;
+  double lat;
+  double lng;
   String name;
   String? imageUrl;
 }
