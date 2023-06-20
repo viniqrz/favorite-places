@@ -1,3 +1,6 @@
+import 'package:favorite_places/database/manager.dart';
+import 'package:favorite_places/model/place.dart';
+import 'package:favorite_places/repository/place.dart';
 import 'package:favorite_places/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +30,15 @@ final theme = ThemeData().copyWith(
   ),
 );
 
-void main() {
+void main() async {
+  final db = await AppDatabaseManager.connect();
+
+  final repo = PlaceRepository(db);
+
+  for (final place in await repo.list()) {
+    print(place.toString());
+  }
+
   runApp(
     const ProviderScope(
       child: MyApp(),

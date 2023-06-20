@@ -21,8 +21,6 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final places = ref.watch(placesProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Places'),
@@ -39,7 +37,7 @@ class _HomeState extends ConsumerState<Home> {
           ),
         ],
       ),
-      body: PlaceList(places: places),
+      body: PlaceList(),
     );
   }
 }

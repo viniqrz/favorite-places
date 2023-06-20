@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:favorite_places/model/place.dart';
 import 'package:favorite_places/providers/places.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CreatePlace extends ConsumerStatefulWidget {
   const CreatePlace({super.key});
@@ -12,12 +17,32 @@ class CreatePlace extends ConsumerStatefulWidget {
 
 class _CreatePlaceState extends ConsumerState<CreatePlace> {
   String _name = '';
-
   final _formKey = GlobalKey<FormState>();
+
+  File? _image;
+
+  Future pickImage() async {
+    try {
+      bool accessAllowed = await Permission.storage.request().isGranted;
+      // Either the permission was already granted before or the user just granted it.
+      if (!accessAllowed) {
+        print('Parabéns');
+        return;
+      }
+
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => _image = imageTemp);
+      print(imageTemp.path);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
 
   void _submit() {
     ref.read(placesProvider.notifier).addPlace(
-          Place(_name),
+          Place(_name, imagePath: _image?.path),
         );
   }
 
@@ -46,6 +71,14 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
+              _image != null
+                  ? Image.file(
+                      _image!,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width * (3 / 4),
+                      fit: BoxFit.scaleDown,
+                    )
+                  : Container(),
               TextFormField(
                 onChanged: (value) {
                   setState(() {
@@ -73,6 +106,13 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              ElevatedButton(
+                onPressed: pickImage,
+                child: const Text('Add image'),
               ),
               const SizedBox(
                 height: 16,
