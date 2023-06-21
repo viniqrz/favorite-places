@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:favorite_places/model/place.dart';
 import 'package:favorite_places/providers/places.dart';
+import 'package:favorite_places/utils/get_position.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+// MAPS_API_KEY='AIzaSyD8W18KHM6WziOkjQS0JkWpUWvrcuofs2g'
 
 class CreatePlace extends ConsumerStatefulWidget {
   const CreatePlace({super.key});
@@ -18,8 +21,26 @@ class CreatePlace extends ConsumerStatefulWidget {
 class _CreatePlaceState extends ConsumerState<CreatePlace> {
   String _name = '';
   final _formKey = GlobalKey<FormState>();
-
   File? _image;
+
+  double? _lat;
+  double? _lng;
+
+  _retrieveUserLocation() async {
+    final location = await determinePosition();
+    print('Location: ${location.latitude}, ${location.longitude}');
+
+    setState(() {
+      _lat = location.latitude;
+      _lng = location.longitude;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _retrieveUserLocation();
+  }
 
   Future pickImage() async {
     try {
@@ -114,6 +135,19 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
                 onPressed: pickImage,
                 child: const Text('Add image'),
               ),
+              const SizedBox(
+                height: 16,
+              ),
+              (_lat != null && _lng != null)
+                  ? Text(
+                      'Your coords are $_lat, $_lng',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                    )
+                  : const SizedBox(
+                      height: 0,
+                    ),
               const SizedBox(
                 height: 16,
               ),
