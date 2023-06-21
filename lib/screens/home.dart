@@ -22,22 +22,20 @@ class _HomeState extends ConsumerState<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Places'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const CreatePlace(),
-                ),
-              );
-            },
-          ),
-        ],
+      appBar: AppBar(title: const Text('Your Places'), actions: []),
+      body: const PlaceList(),
+      floatingActionButton: IconButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.blue)),
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CreatePlace(),
+            ),
+          );
+        },
       ),
-      body: PlaceList(),
     );
   }
 }

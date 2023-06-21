@@ -2,4 +2,6 @@
 
 A new Flutter project.
 
-## Add your favorite places and record them on the map
+## How to run
+
+- create .env file in root dir
