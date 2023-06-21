@@ -4,6 +4,7 @@ import 'package:favorite_places/repository/place.dart';
 import 'package:favorite_places/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -31,6 +32,8 @@ final theme = ThemeData().copyWith(
 );
 
 void main() async {
+  await dotenv.load(fileName: ".env");
+
   final db = await AppDatabaseManager.connect();
 
   final repo = PlaceRepository(db);

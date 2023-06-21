@@ -2,14 +2,13 @@ import 'dart:io';
 
 import 'package:favorite_places/model/place.dart';
 import 'package:favorite_places/providers/places.dart';
+import 'package:favorite_places/services/http/google_maps.dart';
 import 'package:favorite_places/utils/get_position.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-// MAPS_API_KEY='AIzaSyD8W18KHM6WziOkjQS0JkWpUWvrcuofs2g'
 
 class CreatePlace extends ConsumerStatefulWidget {
   const CreatePlace({super.key});
@@ -25,14 +24,20 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
 
   double? _lat;
   double? _lng;
+  String? _address;
 
   _retrieveUserLocation() async {
-    final location = await determinePosition();
-    print('Location: ${location.latitude}, ${location.longitude}');
+    final loc = await determinePosition();
+
+    print('loc: ${loc.latitude}, ${loc.longitude}');
+
+    final address =
+        await GoogleMapsService.getCoordsAddress(loc.latitude, loc.longitude);
 
     setState(() {
-      _lat = location.latitude;
-      _lng = location.longitude;
+      _lat = loc.latitude;
+      _lng = loc.longitude;
+      _address = address;
     });
   }
 
@@ -140,7 +145,7 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
               ),
               (_lat != null && _lng != null)
                   ? Text(
-                      'Your coords are $_lat, $_lng',
+                      'Your address is $_address',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             color: Theme.of(context).colorScheme.onBackground,
                           ),
