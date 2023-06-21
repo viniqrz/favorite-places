@@ -1,15 +1,44 @@
 import 'package:favorite_places/model/place.dart';
+import 'package:favorite_places/providers/places.dart';
 import 'package:favorite_places/screens/place_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PlaceListItem extends StatelessWidget {
+class PlaceListItem extends ConsumerWidget {
   const PlaceListItem({super.key, required this.place});
 
   final Place place;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
+      confirmDismiss: (direction) {
+        return showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Delete Place'),
+              content:
+                  const Text('Are you sure you want to delete this place?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    return Navigator.of(context).pop(false);
+                  },
+                  child: const Text('No', style: TextStyle(color: Colors.blue)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    ref.read(placesProvider.notifier).removePlace(place);
+                    return Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Yes', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            );
+          },
+        );
+      },
       key: ValueKey(place),
       child: ListTile(
         onTap: () => Navigator.of(context).push(
