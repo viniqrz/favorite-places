@@ -7,6 +7,7 @@ class Place {
     this.id,
     this.createdAt,
     this.updatedAt,
+    this.address,
   }) {
     id = id ?? DateTime.now().millisecondsSinceEpoch;
     createdAt = createdAt ?? DateTime.now().toIso8601String();
@@ -19,6 +20,7 @@ class Place {
   double? lat;
   double? lng;
   String? imagePath;
+  String? address;
 
   String? createdAt;
   String? updatedAt;
@@ -30,6 +32,7 @@ class Place {
       'lat': lat,
       'lng': lng,
       'image_path': imagePath,
+      'address': address,
     };
   }
 
@@ -42,11 +45,22 @@ class Place {
       imagePath: map['image_path'],
       createdAt: map['created_at'],
       updatedAt: map['updated_at'],
+      address: map['address'],
     );
   }
 
   @override
   String toString() {
-    return '{name: $name, id: $id, lat: $lat, lng: $lng, imagePath: $imagePath, createdAt: $createdAt, updatedAt: $updatedAt}';
+    return '''
+    {
+      name: $name, id: $id,
+      lat: $lat,
+      lng: $lng,
+      imagePath: $imagePath,
+      createdAt: $createdAt,
+      updatedAt: $updatedAt,
+      address: $address
+    }
+    ''';
   }
 }

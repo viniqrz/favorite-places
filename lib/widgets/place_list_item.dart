@@ -31,7 +31,7 @@ class PlaceListItem extends StatelessWidget {
               ),
         ),
         subtitle: Text(
-          '${place.lat}, ${place.lng}',
+          place.address.toString(),
           style: Theme.of(context).textTheme.titleSmall,
         ),
       ),

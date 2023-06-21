@@ -5,6 +5,7 @@ import 'package:favorite_places/model/place.dart';
 import 'package:favorite_places/providers/places.dart';
 import 'package:favorite_places/services/http/google_maps.dart';
 import 'package:favorite_places/utils/get_position.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,8 +23,9 @@ class CreatePlace extends ConsumerStatefulWidget {
 }
 
 class _CreatePlaceState extends ConsumerState<CreatePlace> {
-  String _name = '';
   final _formKey = GlobalKey<FormState>();
+
+  String _name = '';
   File? _image;
 
   double? _lat;
@@ -33,17 +35,25 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  _retrieveUserLocation() async {
+  _retrieveUserInitLocation() async {
     final loc = await determinePosition();
-
-    print('loc: ${loc.latitude}, ${loc.longitude}');
-
-    final address =
-        await GoogleMapsService.getCoordsAddress(loc.latitude, loc.longitude);
 
     setState(() {
       _lat = loc.latitude;
       _lng = loc.longitude;
+    });
+
+    await _retrieveAddress(loc.latitude, loc.longitude);
+  }
+
+  _retrieveAddress(double lat, double lng) async {
+    setState(() {
+      _address = 'loading...';
+    });
+
+    final address = await GoogleMapsService.getCoordsAddress(lat, lng);
+
+    setState(() {
       _address = address;
     });
   }
@@ -51,7 +61,7 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
   @override
   void initState() {
     super.initState();
-    _retrieveUserLocation();
+    _retrieveUserInitLocation();
   }
 
   Future pickImage() async {
@@ -59,7 +69,9 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
       bool accessAllowed = await Permission.storage.request().isGranted;
       // Either the permission was already granted before or the user just granted it.
       if (!accessAllowed) {
-        print('Parabéns');
+        if (kDebugMode) {
+          print('Parabéns');
+        }
         return;
       }
 
@@ -67,15 +79,22 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
       if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => _image = imageTemp);
-      print(imageTemp.path);
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      if (kDebugMode) {
+        print('Failed to pick image: $e');
+      }
     }
   }
 
   void _submit() {
     ref.read(placesProvider.notifier).addPlace(
-          Place(_name, imagePath: _image?.path, lat: _lat, lng: _lng),
+          Place(
+            _name,
+            imagePath: _image?.path,
+            lat: _lat,
+            lng: _lng,
+            address: _address,
+          ),
         );
   }
 
@@ -193,6 +212,9 @@ class _CreatePlaceState extends ConsumerState<CreatePlace> {
                                   _lat = argument.latitude;
                                   _lng = argument.longitude;
                                 });
+
+                                _retrieveAddress(
+                                    argument.latitude, argument.longitude);
                               },
                             ),
                           ),

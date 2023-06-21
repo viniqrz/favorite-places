@@ -7,6 +7,15 @@ import 'package:sqflite/sqflite.dart';
 class AppDatabaseManager {
   static Database? _database;
 
+  static _onUpgrade(Database db, int oldVersion, int newVersion) {
+    if (oldVersion < newVersion) {
+      if (newVersion == 2) {
+        // VERSION 2 MIGRATION
+        db.execute("ALTER TABLE place ADD COLUMN address VARCHAR(255);");
+      }
+    }
+  }
+
   static Future<Database> connect() async {
     // Avoid errors caused by flutter upgrade.
     // Importing 'package:flutter/widgets.dart' is required.
@@ -37,7 +46,9 @@ class AppDatabaseManager {
       },
       // Set the version. This executes the onCreate function and provides a
       // path to perform database upgrades and downgrades.
-      version: 1,
+      version: 2,
+
+      onUpgrade: _onUpgrade,
     );
     _database = db;
 

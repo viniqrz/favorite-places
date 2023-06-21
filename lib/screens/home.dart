@@ -12,21 +12,17 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<Home> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // "ref" can be used in all life-cycles of a StatefulWidget.
-  //   // ref.read(placesProvider);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Places'), actions: []),
+      appBar: AppBar(
+        title: const Text('Your Places'),
+      ),
       body: const PlaceList(),
       floatingActionButton: IconButton(
         style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.blue)),
+          backgroundColor: MaterialStateProperty.all(Colors.blue),
+        ),
         icon: const Icon(Icons.add),
         onPressed: () {
           Navigator.of(context).push(

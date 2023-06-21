@@ -14,6 +14,7 @@ class PlaceRepository {
   Future<void> insert(
     Place place,
   ) async {
+    print(place);
     await db.insert(
       'place',
       place.toMap(),
