@@ -4,6 +4,8 @@ import 'package:favorite_places/screens/place_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+enum MenuOption { edit, delete }
+
 class PlaceListItem extends ConsumerWidget {
   const PlaceListItem({super.key, required this.place});
 
@@ -49,9 +51,19 @@ class PlaceListItem extends ConsumerWidget {
           ),
         ),
         contentPadding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-        trailing: IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () {},
+        trailing: PopupMenuButton<MenuOption>(
+          // Callback that sets the selected popup menu item.
+          onSelected: (MenuOption item) {},
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuOption>>[
+            const PopupMenuItem<MenuOption>(
+              value: MenuOption.edit,
+              child: Text('Edit'),
+            ),
+            const PopupMenuItem<MenuOption>(
+              value: MenuOption.delete,
+              child: Text('Delete'),
+            ),
+          ],
         ),
         title: Text(
           place.name,
